@@ -11,7 +11,7 @@ class ShowsearchpageDetails extends Component {
 		super(props)
 		 this.state = {
 			query: '',
-			books:props.books,
+			searchBooks:props.books,
 			// autocompleteSearchThrottled: throttle(1000, this.updateQuery)
 		}
 
@@ -23,13 +23,20 @@ updateQuery = (query) => {
     this.setState(() => ({
       query: query
 	}))
-	if(query!=''){
+	if(query===''){
+		this.setState({searchBooks:[]})
+	}
+	if(query!==''){
 	BooksAPI.search(query)
-      .then((books) => {
-		  if(books.length>0){
-		this.setState({books})
+      .then((searchBooks) => {
+		if(searchBooks.length>0){
+		this.setState({searchBooks})
 	  }
-	  })}	  
+	  else{
+		this.setState({searchBooks:[]})
+	  }
+	  })}
+	  	  
   }
 
 
@@ -37,19 +44,35 @@ updateQuery = (query) => {
   BooksAPI.update(book,shelf).then((book) => {
 	book.shelf=shelf
 	this.setState(state => ({
-		books:state.books.filter(bk => bk.id != book.id).concat([ book ])
+		searchBooks:state.searchBooks.filter(bk => bk.id !== book.id).concat([ book ])
 	}))
   })
   
   }
 
  render() {
-	const {query,books} = this.state
+	const {query,searchBooks} = this.state
 	const {showSearchPage,onBackButtonClick} = this.props
 	
 	
 	// const showingBooks =  query === ''? this.props.books: this.state.books === null ? this.props.books:this.state.books;
-	const showingBooks = query === ''? this.props.books: this.state.books
+	
+
+	const booksFromHome = this.props.books
+	const booksFromSearch = this.state.searchBooks
+
+	booksFromSearch.map(book => {
+		booksFromHome.forEach(homeBook => {
+		  if (book.id === homeBook.id) {
+			book.shelf=homeBook.shelf ? homeBook.shelf:"none"
+		  }
+		  else{
+			book.shelf='none'
+		  }
+		})
+	  })
+	  const showingBooks = query === ''? this.state.searchBooks=[]: booksFromSearch
+	 
 	
  	 return (
 		<div className="search-books">
@@ -78,14 +101,27 @@ updateQuery = (query) => {
 							<div className="book-cover" style={{ width: 100, height: 160, 
 								backgroundImage: `url(${book.imageLinks!=null?book.imageLinks.thumbnail:""})` }}></div>
                             <div className="book-shelf-changer">
-                              <select value={this.state.value} onChange={(event) => this.updateBookShelf(book,event.target.value)}> 
-                                <option value="move" disabled>Move to...</option>
-                                <option value="none"></option>
+							<select
+									value={book.shelf}
+									onChange={event => this.updateBookShelf(book, event.target.value)}
+								>
+									<option value="none" disabled>{book.shelf === 'none' ? 'Add' : 'Move'} to...</option>
+									<option value="currentlyReading">Currently Reading</option>
+									<option value="wantToRead">Want to Read</option>
+									<option value="read">Read</option>
+									{book.shelf !== 'none' && <option value="none">None</option>}
+								</select>
+
+
+
+                              {/* <select value={book.shelf} onChange={(event) => this.updateBookShelf(book,event.target.value)}> 	
+								<option value="move" disabled>Move to...</option>
+                                {book.shelf!='none'?(<option value="none" ></option>):
+								(<option value="none" >&#10004;</option>)}
                                 <option value="wantToRead">Want to Read</option>
                                 <option value="read">Read</option>    
 								<option value="currentlyReading">Currently Reading</option>
-								<option value="none">None</option>
-                              </select>
+                              </select> */}
                             </div>
                           </div>
                           <div className="book-title"><p>{book.title}</p></div>
