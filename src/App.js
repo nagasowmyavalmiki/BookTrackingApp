@@ -12,64 +12,71 @@ import { Link } from 'react-router-dom'
 
 class BooksApp extends React.Component {
   state = {
-  showSearchPage: false,
-	books: []
+    showSearchPage: false,
+    books: []
   }
 
   componentDidMount() {
-	console.log('triggered during componentDidMount')
-   this.fetchInfo()
-  }
-
-  fetchInfo=() => {
-    BooksAPI.getAll()
-    .then((books) => {
-      this.setState(() => ({
-        books
-      }))
-    })
-    
-    
-  }
-
-  handleBackButtonClick=() =>{
+    console.log('triggered during componentDidMount')
     this.fetchInfo()
   }
 
-  render() {
-   const {books} = this.state		
-    return (
-    
-          <BrowserRouter>         
-                  <div className="app">
-                        <Route exact path='/' render={() => (
-                            <div className="list-books">
-                                <div className="list-books-title">
-                                  <h1>MyReads</h1>
-                                </div>
-                                    <div className="list-books-content">
-                                        <div>
-                                        <CurrentlyReading books={this.state.books} />
-                                        <WanttoRead books={this.state.books}/>
-                                        <Read books={this.state.books}/>	
-                                        </div>
-                                    </div>
-                            </div>
-                        )}/>
-                        <Link
-                             to='/search'
-                             className='open-search'>Add a book
-                        </Link>
+  fetchInfo = () => {
+    BooksAPI.getAll()
+      .then((books) => {
+        this.setState(() => ({
+          books
+        }))
+      })
+  }
 
-                        <Route exact path='/search' render={() => ( 
-                              <ShowsearchpageDetails
-                                books={this.state.books}
-                                onBackButtonClick={this.handleBackButtonClick}
-                              />
-                        )}/>
-                  </div>
-                          
-          </BrowserRouter>
+  handleBackButtonClick = () => {
+    this.fetchInfo()
+  }
+
+  handleBookShelfChange = (bookSend, shelf) => {
+    BooksAPI.update(bookSend, shelf).then(() => {
+      bookSend.shelf = shelf
+      this.setState(state => ({
+        books: state.books.filter(bk => bk.id != bookSend.id).concat([bookSend])
+      }))
+    })
+  }
+
+  render() {
+    return (
+      <BrowserRouter>
+        <div className="app">
+          <Route exact path='/' render={() => (
+            <div className="list-books">
+              <div className="list-books-title">
+                <h1>MyReads</h1>
+              </div>
+              <div className="list-books-content">
+                <div>
+                  <CurrentlyReading books={this.state.books} />
+                  <WanttoRead books={this.state.books} />
+                  <Read books={this.state.books} />
+                </div>
+              </div>
+            </div>
+          )} />
+          <Link
+            to='/search'
+            className='open-search'>
+            Add a book
+          </Link>
+
+          <Route exact path='/search' render={() => (
+            <ShowsearchpageDetails
+              books={this.state.books}
+              onUpdateBookShelf={this.handleBookShelfChange}
+              onBackButtonClick={this.handleBackButtonClick}
+            />
+          )} />
+        </div>
+
+      </BrowserRouter>
     )
   }
 }
