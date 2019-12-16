@@ -10,15 +10,11 @@ class WanttoRead extends Component {
 		}
 
   }
-  updateBookShelf = (book,shelf) => {
-    BooksAPI.update(book,shelf).then((book) => {
-    book.shelf=shelf
-    this.setState(state => ({
-      books:state.books.filter(bk => bk.id != book.id).concat([ book ])
-    }))
-    })
-    
-    }
+  updateBookShelf = (book, shelf) => {
+    if (book.shelf === shelf) return;
+    this.props.onUpdateBookShelf(book, shelf);
+}
+
  render() {
    
   const {books} = this.props
@@ -34,6 +30,7 @@ class WanttoRead extends Component {
 					<ol className="books-grid">
           {showingBooks.map((book)=>(
                       <li key={book.id} className='book-wanttoread'>
+                        {console.log(book.id)}
                         <div className="book">
                           <div className="book-top">
                             <div className="book-cover" style={{ width: 100, height: 160, 

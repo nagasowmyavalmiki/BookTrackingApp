@@ -14,15 +14,11 @@ class Read extends Component {
 
 	}
 
-  updateBookShelf = (book,shelf) => {
-    BooksAPI.update(book,shelf).then((book) => {
-    book.shelf=shelf
-    this.setState(state => ({
-      books:state.books.filter(bk => bk.id != book.id).concat([ book ])
-    }))
-    })
-    
-    }
+  updateBookShelf = (book, shelf) => {
+    if (book.shelf === shelf) return;
+    this.props.onUpdateBookShelf(book, shelf);
+}
+
   render() {
     const {books} = this.props
      const showingBooks = books.filter((book) => (

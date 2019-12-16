@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import * as BooksAPI from './BooksAPI'
 import { Link } from 'react-router-dom'
-import { throttle } from 'throttle-debounce';
-import { Redirect } from 'react-router-dom'
-
+import _ from 'lodash'
 
 class ShowsearchpageDetails extends Component {
 
@@ -43,6 +41,9 @@ class ShowsearchpageDetails extends Component {
     render() {
         const { query, searchBooks } = this.state
         const { onBackButtonClick } = this.props
+        const uniqueBooks = _.uniqBy(searchBooks, 'id')
+
+
 
         return (
             <div className="search-books">
@@ -64,12 +65,14 @@ class ShowsearchpageDetails extends Component {
 
                 <ol className="books-grid">
 
-                    {searchBooks.map((book) => {
+                    {uniqueBooks.map((book) => {
                         const myBook = this.props.books.filter((myBook) => (myBook.id === book.id))[0]
                         book.shelf = myBook ? myBook.shelf : "none"
+                        console.log(book.id)
                         return (
+                            
                             <li key={book.id} className='book-list-item'>
-                                <div className="book">
+                                <div className="book" >
                                     <div className="book-top">
                                         <div className="book-cover" style={{
                                             width: 100, height: 160,

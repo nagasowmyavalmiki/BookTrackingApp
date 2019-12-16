@@ -1,26 +1,33 @@
-# MyReads Project
-MyReads is a simple book management app, like Goodreads. 
-You can add the books that you want to read, currently reading or have already read, in here.
+MyReads Project:
+A MyReads app that allows user to select and categorize books as you have read, currently reading, 
+or want to read. The project emphasizes using React to build the application and provides an API server and client library that you will use to persist information as you interact with the application.
 
-* install all project dependencies with `npm instal
-* start the development server with `npm start`
+How to Run:
+Run npm install to install the project dependencies.
+Run the app using npm start.
+App can be seen at: localhost:3000.
 
-To install the application, type the following commands in the terminal. Remember, you need to be on the same app folder:
+Backend Server:
+To simplify your development process, provided file BooksAPI.js contains the methods you will need to perform necessary operations on the backend.
 
-npm install
-Now, just start the local server with NPM or YARN (Yarn installation: npm install --global yarn)
+getAll():
+Returns a Promise which resolves to a JSON object containing a collection of book objects.
+This collection represents the books currently in the bookshelves in your app.
 
-npm start
-Open the localhost link provided in your terminal.
+update(book, shelf):
+book: <Object>containing at minimum an id attribute
+shelf: <String> contains one of ["wantToRead", "currentlyReading", "read"]
+Returns a Promise which resolves to a JSON object containing the response data of the POST request
 
-Home Page:
-Home page shows three divisions Read, Currently Reading and Wanto to read. Here you have a provision to change the shelf.
+search(query, maxResults):
+query: <String> will put input value in search bar
+maxResults: <Integer> Due to the nature of the backend server, search results are capped at 20, even if this is set higher.
+Returns a Promise which resolves to a JSON object containing a collection of book objects.
+These books do not know which shelf they are on. They are raw results only. 
+You'll need to make sure that books have the correct state while on the search page.
 
-Search Page:
-After clicking on + icon which is there at bottom right corner gives a search page, 
-from here search for faviourate books and move to specific shelf. Use the back button to reach home page.
-
-
-have fun! :)
-
+How to Use the App:
+Books are arranged in three categories, Currently Reading, Want to Read and Read
+To change a book's category or remove a book from the list, click on the green button on the book cover
+To add new books, click on the green + button at the bottom of the page. Enter an author's name or title. Up to 20 items will be returned.
 
